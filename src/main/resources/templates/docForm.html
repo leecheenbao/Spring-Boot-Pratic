@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head"></head>
+<body>
+	<nav th:replace="layout :: header"></nav>
+
+
+	<div class="container main-content form">
+		<div th:if="${error != null}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${error}"></span>
+		</div>
+		<div class="row">
+			<form action="#" th:action="@{/doc/save}" th:object="${doc}"
+				method="POST" enctype="multipart/form-data">
+
+				<div class="form-group">
+					<label>保險種類</label> <br /> <select th:field="*{class_id}"
+						th:id="class_id" th:required="required">
+						<option th:value="C01"><label>行動保服</label></option>
+						<option th:value="C02"><label>行動投保</label></option>
+						<option th:value="C03"><label>行動裡賠</label></option>
+						<option th:value="C04"><label>旅平險</label></option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>文件編號</label> <input type="text" class="form-control"
+						th:field="*{doc_id}" th:id="addr" th:required="required" />
+				</div>
+
+
+				<div class="form-group">
+					<label>文件標題</label> <input type="text" class="form-control"
+						th:field="*{xcode_title}" th:id="addr" th:required="required" />
+				</div>
+
+				<div class="form-group">
+					<label>文件名稱</label> <input type="text" class="form-control"
+						th:field="*{doc_name}" th:id="addr" th:required="required" />
+				</div>
+
+				<div class="">
+					<label>子文件名稱</label>
+					<div th:each="docSubContact,iterStat : ${docsub}"
+						th:value="${docSubContact.docsub_id}">
+						<input type="checkbox" th:id="${docSubContact.docsub_id}"
+							th:value="${docSubContact.docsub_id}" name="docsub_id" /> <label
+							th:text="${docSubContact.sub_title}"></label>
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-primary">Save</button>
+
+			</form>
+			<div th:each="doclist,iterStat : ${doclist}" th:text="${doclist}"
+				id="str" style="display: none"></div>
+
+		</div>
+	</div>
+
+
+	<!-- /.container -->
+
+	<footer th:replace="layout :: footer"></footer>
+	<script>
+		/*<![CDATA[*/
+		var str = $("#str").text();
+		var strList = str.split(",");
+		var len = strList.length;
+
+		for (var x = 0; x < len; x++) {
+			$("#" + strList[x]).prop("checked", true);
+		}
+		/*]]>*/
+	</script>
+</body>
+</html>

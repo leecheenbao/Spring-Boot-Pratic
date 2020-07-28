@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head">
+
+
+</head>
+
+
+<body>
+	<nav th:replace="layout :: header"></nav>
+	<div class="container main-content list">
+		<h1>險種文件維護</h1>
+		<div th:if="${success}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${success}"></span>
+		</div>
+
+		<div th:if="${error}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${error}"></span>
+		</div>
+
+		<div class="row">
+			<a th:href="@{/doc/create}" class="btn btn-warning pull-left">
+				<span class="glyphicon glyphicon-plus"></span> 新增資料
+			</a>
+			<form class="form-inline pull-right" action="#"
+				th:action="@{/doc/search}" method="GET">
+				<div class="form-group">
+					<input type="text" class="form-control" name="s"
+						placeholder="輸入要搜尋的名字..." />
+				</div>
+				<button type="submit" class="btn btn-danger">搜尋</button>
+			</form>
+		</div>
+		<th:block th:if="${#lists.isEmpty(doc)}">
+			<h3>沒有資料</h3>
+		</th:block>
+
+		<th:block th:unless="${#lists.isEmpty(doc)}">
+			<div class="row">
+				<table class="table table-bordered table-hover">
+					<thead>
+						<tr>
+							<th></th>
+							<th>種類</th>
+							<th>編號</th>
+							<th th:class="main">文件標題</th>
+							<th th:class="main">文件名稱</th>
+							<th>編輯</th>
+							<th>刪除</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="contact,iterStat : ${doc}">
+							<td th:text="${iterStat.count}"></td>
+							
+							<td>
+								<div th:switch="${contact.class_id}"> 
+								  <p th:case="'C01'">行動保服</p>
+								  <p th:case="'C02'">行動投保</p>
+								  <p th:case="'C03'">行動裡賠</p>
+								  <p th:case="'C04'">旅平險</p>
+								</div>
+							</td>
+							
+							<td th:text="${contact.doc_id}"></td>
+							<td th:text="${contact.xcode_title}" th:class="main"></td>
+							<td th:text="${contact.doc_name}" th:class="main"></td>
+
+							<td><a th:href="@{/doc/{id}/edit(id=${contact.doc_id})}"><span
+									class="glyphicon glyphicon-pencil"></span></a></td>
+
+							<td><a th:href="@{/doc/{id}/delete(id=${contact.doc_id})}"><span
+									class="glyphicon glyphicon-trash"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</th:block>
+	</div>
+	<!-- /.container -->
+
+
+	<script>
+		
+	</script>
+</body>
+</html>

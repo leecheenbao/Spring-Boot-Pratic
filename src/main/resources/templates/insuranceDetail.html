@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head">
+
+
+</head>
+
+
+<body>
+	<nav th:replace="layout :: header"></nav>
+
+	<div class="container main-content list">
+		<h1>險種 / 簽名維護</h1>
+				<div th:text="${str}" th:id="insuranceId" style="display:none"></div>
+
+		<div th:if="${success}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${success}"></span>
+		</div>
+
+		<div th:if="${error}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${error}"></span>
+		</div>
+
+		<div class="row"></div>
+		<th:block th:if="${#lists.isEmpty(insurance)}">
+			<h3>沒有資料</h3>
+		</th:block>
+		<form action="#" th:action="@{/insurance/create}"
+			th:object="${signatureDoc}" method="POST">
+			<button type="submit" class="btn btn-danger">儲存</button>
+			<button type="button" class="btn btn-info" id="recoveryBtn">復原</button>
+			<button type="button" class="btn btn-info" id="deleteBtn">清除</button>
+
+			<th:block th:unless="${#lists.isEmpty(insurance)}">
+				<div class="row">
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th colspan="3" rowspan="2">
+									<label>保險種類</label>
+									<select th:id="class_id">
+										<option th:value="allClass">全部</option>
+										<option th:value="C01">C01/行動保服</option>
+										<option th:value="C02">C02/行動投保</option>
+										<option th:value="C03">C03/旅平險</option>
+										<option th:value="C04">C04/行動理賠</option>
+									</select>
+									
+									<label>險種文件</label>
+									<select th:class="detailSelect"	th:name="doc_id" th:id="doc_id">
+										<option value="null">請選擇保險種類</option>
+										<option th:each="docContact,iterStat : ${doc}" th:class="${docContact.class_id} +' '+allClass" 
+											th:value="${docContact.doc_id}"><label
+												th:text="${docContact.class_id}+'/'+${docContact.doc_name}"></label>
+										</option>
+										
+
+									</select>
+									
+									<label>子文件</label>
+									<select th:class="detailSelect"	th:name="docsub_id" th:id="docsub_id">
+										<option value="empty">請選擇子文件</option>
+										<option th:each="docSubContact,iterStat : ${docSub}" th:class="docsubOption" 
+											th:value="${docSubContact.docsub_id}" th:id="${docSubContact.docsub_id}"><label
+												th:text="${docSubContact.sub_title}+'/'+${docSubContact.docsub_id}" ></label>
+										</option>
+										
+
+									</select>
+								</th>
+
+								<th th:each="contact,iterStat : ${signature}">
+								<input
+									type="checkbox" th:id="'colunmBox_'+${iterStat.count}" class="colunmBox" th:value="${iterStat.count}"/>
+								</th>
+								
+							</tr>
+							<tr>
+								<th th:each="contact,iterStat : ${signature}" class="mixed">
+									<p class="mixed" th:text="${contact.seq}+'/'+${contact.epeoplename} "></p>
+								</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="insContact,iterStatA : ${insurance}" 
+								th:class="${insContact.class_id}+'_ colunm_'+${iterStatA.count} +' allClass'">
+								<td th:text="${iterStatA.count}"></td>
+								
+								<td>
+									<input type="checkbox" th:class="clsBtn" th:id="clsBtn_+${iterStatA.count}" th:value="${iterStatA.count}"/>
+								</td>
+								
+								
+								
+								<td th:text="${insContact.insurance_name}"  th:class="main">
+								
+								</td>
+
+								<td th:each="contact,iterStatB : ${signature}">
+									<input
+									type="checkbox" th:name="data" th:class="docStr+' row_'+${iterStatA.count}+' colunm_'+${iterStatB.count}"
+									th:id="${insContact.insurance_id}+'_'+${contact.epeoplename}"
+									th:value="${insContact.insurance_id}+'_'+${contact.epeoplename}" />
+								</td>
+								
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</th:block>
+		</form>
+	</div>
+	<!-- /.container -->
+
+
+	<script th:inline="javascript">
+		var str = $("#insuranceId").text();
+		var strList = str.split(",");
+		var len = strList.length;
+		var class_id = $("#class_id").val();
+		
+		$(document).ready(function() {
+			/*<![CDATA[*/
+			$('.docsubOption').css("display","none");
+			for (var x = 0; x < len; x++) {
+				$("#" + strList[x]).prop("checked", false);
+			}
+			
+			
+			if(class_id == 'allClass'){
+				$(".allClass").show();
+			}
+			
+			
+			var param = {
+				"action" : "getAll",
+			};
+			
+// 			$.ajax({
+// 				url : "/insuranceDetail/onChange",
+// 				dataType : "text",
+// 				data : param,
+// 				type : "post",
+// 				success : function(data) {
+// 					$("#insuranceId").text(data);
+// 					/*<![CDATA[*/
+// 					strList = data.split(",");
+// 					$(".docStr").prop("checked", false);
+// 					for (var x = 0; x < len; x++) {
+// 						$("#" + strList[x]).addClass("cache");
+// 						$("#" + strList[x]).prop("checked", true);
+// 					}
+// 					/*]]>*/
+// 				},
+// 				error : function(XMLHttpRequest, textStatus, errorThrown) {
+// 					alert("出現異常，異常訊息：" + textStatus, "error");
+// 				}
+// 			});
+		});
+		
+		//選單復原
+		$("#recoveryBtn").click(function(){
+			$(".docStr").prop("checked",false);
+			$(".cache").prop("checked",true);
+		});
+		
+		//選單全部取消
+		$("#deleteBtn").click(function(){
+			$(".docStr").prop("checked",false);
+		});
+		
+		//每列全選全取消
+		$(".clsBtn").click(function(){
+			var count = $(this).val();
+			if($("#clsBtn_"+count).prop("checked")){
+				$(".row_"+count).prop("checked",true);
+			}else{
+				$(".row_"+count).prop("checked",false);
+			}
+		});
+		
+		//每欄全選全取消
+		$(".colunmBox").click(function(){
+			var count = $(this).val();
+			if($("#colunmBox_"+count).prop("checked")){
+				$(".colunm_"+count).prop("checked",true);
+			}else{
+				$(".colunm_"+count).prop("checked",false);
+			}
+		});
+		
+		
+		
+		//選擇險種文件及子文件後更新選單checkbok
+		$('#doc_id,#docsub_id').on("change", function() {
+			var doc_id = $("#doc_id").val();
+			var docsub_id = $("#docsub_id").val();
+			var param = {
+				"action" : "changeDocId",
+				"doc_id" : doc_id,
+				"docsub_id" : docsub_id
+			};
+
+			$.ajax({
+				url : "/insuranceDetail/onChange",
+				dataType : "text",
+				data : param,
+				type : "post",
+				success : function(data) {
+					$("#insuranceId").text(data);
+					/*<![CDATA[*/
+					strList = data.split(",");
+					$(".docStr").prop("checked", false);
+					$(".cache").removeClass("cache");
+					for (var x = 0; x < len; x++) {
+						$("#" + strList[x]).addClass("cache");
+						$("#" + strList[x]).prop("checked", true);
+					}
+					/*]]>*/
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("出現異常，異常訊息：" + textStatus, "error");
+				}
+			});
+
+		});
+		
+		//選擇險種文件後更新子文件列表
+		$('#doc_id').on("change", function() {
+			var doc_id = $("#doc_id").val();
+			var param = {
+				"action" : "changeDocId",
+				"doc_id" : doc_id
+			};
+
+			$.ajax({
+				url : "/insuranceDetail/docOnChange",
+				dataType : "text",
+				data : param,
+				type : "post",
+				success : function(data) {
+					/*<![CDATA[*/
+					strList = data.split(",");
+					$('.docsubOption').css("display","none")
+					for (var x = 0; x < len; x++) {
+						$("#" + strList[x]).css("display","inline");
+					}
+					/*]]>*/
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("出現異常，異常訊息：" + textStatus, "error");
+				}
+			});
+
+		});
+		
+		
+		//保險種類下拉選單
+		$('#class_id').on("change", function() {
+			var class_id = $("#class_id").val();
+			$(".allClass").hide();
+			$("."+class_id).show();
+			$(".colunmA").hide();
+			$("."+class_id+"_").show();
+			
+			if(class_id == 'allClass'){
+				$(".allClass").show();
+			}
+		});
+	</script>
+</body>
+</html>

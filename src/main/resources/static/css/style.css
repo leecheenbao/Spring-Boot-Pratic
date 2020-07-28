@@ -1,0 +1,41 @@
+.main-content {
+    min-height: 500px;
+    max-width: 700px;
+    margin-top: 70px;
+}
+
+.list {
+    max-width: 100%;
+}
+
+.form {
+    max-width: 450px;
+}
+
+.row {
+    margin-top: 30px;
+}
+
+.table th, td {
+    text-align: center;
+}
+
+
+
+.field-error {
+    border: 1px solid #ff0000;
+    margin-bottom: 10px;
+}
+.main{
+	width:30%;
+	text-align: left;
+}
+
+.mixed{
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+}
+
+.detailSelect{
+	width:100px;
+}

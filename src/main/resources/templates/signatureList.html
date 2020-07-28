@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head">
+
+
+</head>
+
+
+<body>
+	<nav th:replace="layout :: header"></nav>
+	<div class="container main-content list">
+		<h1>簽名人維護</h1>
+		<div th:if="${success}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${success}"></span>
+		</div>
+
+		<div th:if="${error}"
+			class="row alert alert-success alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"
+				aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<span th:text="${error}"></span>
+		</div>
+
+		<div class="row">
+			<a th:href="@{/signature/create}" class="btn btn-warning pull-left">
+				<span class="glyphicon glyphicon-plus"></span> 新增資料
+			</a>
+			<form class="form-inline pull-right" action="#"
+				th:action="@{/signature/search}" method="GET">
+				<div class="form-group">
+					<input type="text" class="form-control" name="s"
+						placeholder="輸入要搜尋的名字..." />
+				</div>
+				<button type="submit" class="btn btn-danger">搜尋</button>
+			</form>
+		</div>
+		<th:block th:if="${#lists.isEmpty(signature)}">
+			<h3>沒有資料</h3>
+		</th:block>
+
+		<th:block th:unless="${#lists.isEmpty(signature)}">
+			<div class="row">
+				<table class="table table-bordered table-hover">
+					<thead>
+						<tr>
+							<th></th>
+							<th>簽名人代號</th>
+							<th>簽名人</th>
+							<th>排序編號</th>
+							<th>種類</th>
+							<th>編輯</th>
+							<th>刪除</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="contact,iterStat : ${signature}">
+							<td th:text="${iterStat.count}"></td>
+							<td th:text="${contact.epeoplename}" th:class="main"></td>
+							<td th:text="${contact.signature_name}" th:class="main"></td>
+							<td th:text="${contact.seq}"></td>
+							<td th:text="${contact.signpattern}"></td>
+
+							<td><a th:href="@{/signature/{id}/edit(id=${contact.epeoplename})}"><span
+									class="glyphicon glyphicon-pencil"></span></a></td>
+
+							<td><a th:href="@{/signature/{id}/delete(id=${contact.epeoplename})}"><span
+									class="glyphicon glyphicon-trash"></span></a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</th:block>
+	</div>
+	<!-- /.container -->
+
+
+	<script>
+		
+	</script>
+</body>
+</html>
